@@ -11,7 +11,6 @@ import java.util.List;
 @Table(name = "vendas")
 @Getter
 @Setter
-
 public class VendaModelo {
 
     @Id
@@ -26,14 +25,18 @@ public class VendaModelo {
     )
     private List<ProdutoModelo> produtos;
 
+    /**
+     * As quantidades dos produtos na venda.
+     */
     @ElementCollection
     private List<Integer> quantidades;
 
-    @CollectionTable(name = "venda_quantidade", joinColumns = @JoinColumn(name = "venda_id"))
-    @Column(name = "quantidade")
-
+    @Column(name = "valor_total")
     private double valorTotal;
 
+    /**
+     * A data da venda.
+     */
     private LocalDate dataVenda;
 
 }
