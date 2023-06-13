@@ -58,7 +58,7 @@ Para executar o Sistema Mercadinho localmente, siga os passos abaixo:
 2. Para iniciar a aplicação do Sistema Mercadinho execute:
 
    ```shell
-   cd sm-app
+   cd Front
    npm install
    npm start
 
