@@ -9,10 +9,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class RespostaModelo {
-
-    /**
-     * A mensagem da resposta.
-     */
+    
     private String mensagem;
 
 }
