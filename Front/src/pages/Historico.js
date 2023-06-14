@@ -1,26 +1,12 @@
-import React, { useState } from "react";
+import React from "react";
 import Bootstrap from "../components/Bootstrap";
 
-// Página de Historico de Vendas
+//Página de Historico de Vendas
 export default function Historico({ vendas }) {
-  const [ordem, setOrdem] = useState(""); // Estado para armazenar a opção de ordenação selecionada
-
-  const ordenarVendas = () => {
-    // Realiza a ordenação com base na opção selecionada
-    if (ordem === "recente") {
-      return [...vendas].sort(
-        (a, b) => new Date(b.dataVenda) - new Date(a.dataVenda)
-      );
-    } else if (ordem === "antiga") {
-      return [...vendas].sort(
-        (a, b) => new Date(a.dataVenda) - new Date(b.dataVenda)
-      );
-    } else {
-      return vendas; // Mantém a ordem original
-    }
-  };
-
-  let vendasOrdenadas = ordenarVendas(); // Lista de vendas ordenadas
+  let quantidades = [];
+  for (let i = 0; i < vendas.length; i++) {
+    quantidades.push(vendas[i].quantidades);
+  }
 
   function converterData(dataString) {
     const partes = dataString.split("-");
@@ -43,21 +29,6 @@ export default function Historico({ vendas }) {
 
       <main>
         <div className="mx-auto max-w-7xl py-6 sm:px-6 lg:px-8">
-          <div className="mb-4">
-            <label htmlFor="ordenacao" className="mr-2 font-semibold">
-              Ordenar por:
-            </label>
-            <select
-              id="ordenacao"
-              className="p-2 border border-gray-300 rounded"
-              value={ordem}
-              onChange={(e) => setOrdem(e.target.value)}
-            >
-              <option value="recente">Mais recentes</option>
-              <option value="antiga">Mais antigas</option>
-            </select>
-          </div>
-
           <table className="table">
             <Bootstrap />
             <thead>
@@ -71,7 +42,7 @@ export default function Historico({ vendas }) {
             </thead>
 
             <tbody>
-              {vendasOrdenadas.map((obj, indice) => (
+              {vendas.map((obj, indice) => (
                 <tr key={indice}>
                   <td>{indice + 1}</td>
                   <td>
