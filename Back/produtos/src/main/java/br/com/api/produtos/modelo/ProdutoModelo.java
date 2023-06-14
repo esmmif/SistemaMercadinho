@@ -12,15 +12,25 @@ import java.util.List;
 @Table(name = "produtos")
 @Getter
 @Setter
-
 public class ProdutoModelo {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long codigo;
 
+    /**
+     * O nome do produto.
+     */
     private String nome;
+
+    /**
+     * O preço do produto.
+     */
     private double preco;
+
+    /**
+     * A quantidade disponível do produto.
+     */
     private int quantidade;
 
     @JsonIgnore
