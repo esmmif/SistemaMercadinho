@@ -24,33 +24,55 @@ public class ProdutoServico {
     @Autowired
     private RespostaModelo rm;
 
+    /**
+     * Obtém um produto pelo código.
+     *
+     * @param codigo O código do produto.
+     * @return A resposta contendo o produto encontrado ou uma resposta de erro.
+     */
     public ResponseEntity<ProdutoModelo> obterPorCodigo(long codigo) {
-    ProdutoModelo produto = pr.findById(codigo).orElse(null);
-    
-    if (produto != null) {
-        return new ResponseEntity<ProdutoModelo>(produto, HttpStatus.OK);
-    } else {
-        return new ResponseEntity<ProdutoModelo>(HttpStatus.NOT_FOUND);
+        ProdutoModelo produto = pr.findById(codigo).orElse(null);
+
+        if (produto != null) {
+            return new ResponseEntity<ProdutoModelo>(produto, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<ProdutoModelo>(HttpStatus.NOT_FOUND);
+        }
     }
-}
 
-
+    /**
+     * Lista todos os produtos.
+     *
+     * @return A lista de produtos.
+     */
     public Iterable<ProdutoModelo> listar() {
         return pr.findAll();
     }
 
+    /**
+     * Lista todas as vendas.
+     *
+     * @return A lista de vendas.
+     */
     public Iterable<VendaModelo> listarVendas() {
         return vr.findAll();
     }
 
+    /**
+     * Realiza o cadastro ou a alteração de um produto.
+     *
+     * @param pm    O objeto do produto a ser cadastrado ou alterado.
+     * @param acao  A ação a ser realizada (cadastrar ou alterar).
+     * @return A resposta contendo o produto cadastrado ou alterado ou uma resposta de erro.
+     */
     public ResponseEntity<?> cadastrarAlterar(ProdutoModelo pm, String acao) {
         // Implementação do método cadastrarAlterar atual
-        
-        if(pm.getNome().equals("")) {
+
+        if (pm.getNome().equals("")) {
             rm.setMensagem("O nome do produto é obrigatório!");
             return new ResponseEntity<RespostaModelo>(rm, HttpStatus.BAD_REQUEST);
         } else {
-            if(acao.equals("cadastrar")) {
+            if (acao.equals("cadastrar")) {
                 return new ResponseEntity<ProdutoModelo>(pr.save(pm), HttpStatus.CREATED);
             } else {
                 return new ResponseEntity<ProdutoModelo>(pr.save(pm), HttpStatus.OK);
@@ -58,30 +80,43 @@ public class ProdutoServico {
         }
     }
 
+    /**
+     * Remove um produto pelo código.
+     *
+     * @param codigo O código do produto a ser removido.
+     * @return A resposta indicando o sucesso ou erro na remoção do produto.
+     */
     public ResponseEntity<RespostaModelo> remover(long codigo) {
-    ProdutoModelo produto = pr.findById(codigo).orElse(null);
+        ProdutoModelo produto = pr.findById(codigo).orElse(null);
 
-    if (produto == null) {
-        rm.setMensagem("Produto com código " + codigo + " não encontrado!");
-        return new ResponseEntity<RespostaModelo>(rm, HttpStatus.NOT_FOUND);
-    }
-
-    // Verifica se o produto está presente em alguma venda
-    Iterable<VendaModelo> vendas = vr.findAll();
-    for (VendaModelo venda : vendas) {
-        List<ProdutoModelo> produtos = venda.getProdutos();
-        if (produtos.contains(produto)) {
-            rm.setMensagem("O produto está presente em uma venda e não pode ser removido!");
-            return new ResponseEntity<RespostaModelo>(rm, HttpStatus.BAD_REQUEST);
+        if (produto == null) {
+            rm.setMensagem("Produto com código " + codigo + " não encontrado!");
+            return new ResponseEntity<RespostaModelo>(rm, HttpStatus.NOT_FOUND);
         }
+
+        // Verifica se o produto está presente em alguma venda
+        Iterable<VendaModelo> vendas = vr.findAll();
+        for (VendaModelo venda : vendas) {
+            List<ProdutoModelo> produtos = venda.getProdutos();
+            if (produtos.contains(produto)) {
+                rm.setMensagem("O produto está presente em uma venda e não pode ser removido!");
+                return new ResponseEntity<RespostaModelo>(rm, HttpStatus.BAD_REQUEST);
+            }
+        }
+
+        pr.deleteById(codigo);
+
+        rm.setMensagem("Produto removido com sucesso");
+        return new ResponseEntity<RespostaModelo>(rm, HttpStatus.OK);
     }
 
-    pr.deleteById(codigo);
-
-    rm.setMensagem("Produto removido com sucesso");
-    return new ResponseEntity<RespostaModelo>(rm, HttpStatus.OK);
-}
-
+    /**
+     * Realiza o cadastro de uma venda.
+     *
+     * @param codigosProdutos Os códigos dos produtos da venda.
+     * @param quantidades     As quantidades dos produtos da venda.
+     * @return A resposta indicando o sucesso ou erro no cadastro da venda.
+     */
     public ResponseEntity<?> cadastrarVenda(List<Long> codigosProdutos, List<Integer> quantidades) {
         // Verifica se a lista de códigos de produtos e quantidades têm o mesmo tamanho
         if (codigosProdutos.size() != quantidades.size()) {
